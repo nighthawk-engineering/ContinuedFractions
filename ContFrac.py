@@ -10,16 +10,18 @@ print('digit precision:',mp.dps)
 a= 431
 b= 327
 
+digs = 43
+
 #rat = mpf(a/b)
 #rat = mpf(np.pi) # doesn't return a good binary value for PI -- don't use this
-rat = mpf('3.1415926535897932384626433832795028841971693993751')
-rat = mpf('3.14159265358979323846264338327950288')
-#rat = mpf('3.14159265358979323846')
+piVal = '3.1415926535897932384626433832795028841971693993751'
+rat = mpf(piVal[0:digs+2])
 #rat = mpf('3.1415926')
 print('Rat:',rat)
 
-prec = mpf('1e6')
-
+prec = mpf('1e15')
+ndigits = len(str(rat))-2
+print('number of digits',ndigits)
 frac = True
 count = 0
 cfrac = []
@@ -36,16 +38,33 @@ while (frac > 0 and count < 1000000):
   elif frac < 1/prec:
     frac = 0
   if frac != 0:
-    print('%d, %f,'%(itgr,frac),1/frac)
+    #print('%d, %f,'%(itgr,frac),1/frac)
+    #print(itgr,end=',')
     rat = mpf(1)/frac
   else:
-    print('%d'%itgr)
+    #print('%d'%itgr)
+    pass
   cfrac.append(str(itgr))
   #
   count += 1
 
-print('\nNotation:',','.join(cfrac))
+print('\nNotation: ',end='')
+print('['+cfrac[0]+';'+','.join(cfrac[1:])+']')
+print()
 if count == 1000000:
   print('Exceeded max count')
 else:
-  print('Last rat',rat)
+  fmt = 'Last rat %.'+str(ndigits)+'f'
+  print(fmt%rat)
+
+####################################################
+
+a0 = cfrac.pop(0)
+cfrac.reverse()
+an = cfrac.pop(0)
+val = 1/mpf(an)
+for a in cfrac:
+  val = 1/(mpf(a) + val)
+val += mpf(a0)
+print('Original',piVal[0:digs+2])
+print('   Model',val)
